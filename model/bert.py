@@ -13,11 +13,12 @@ class BERT(nn.Module):
         self.feed_forward_hidden = hidden * 4
 
         self.embedding: BERTEmbedding = embedding
-        self.transformer_blocks = nn.ModuleList([TransformerBlock(hidden=hidden,
-                                                                  attn_heads=attn_heads,
-                                                                  feed_forward_hidden=self.feed_forward_hidden,
-                                                                  dropout=dropout)
-                                                 for _ in range(n_layers)])
+        self.transformer_blocks = nn.ModuleList(
+            [TransformerBlock(hidden=hidden,
+                              attn_heads=attn_heads,
+                              feed_forward_hidden=hidden * 4,
+                              dropout=dropout)
+             for _ in range(n_layers)])
 
     def forward(self, x, mask=None):
         for transformer in self.transformer_blocks:
