@@ -22,7 +22,7 @@ class BERTTrainer:
         self.train_data = train_dataloader
         self.test_data = test_dataloader
 
-        self.optim = Adam(self.model.parameters(), lr=1e-4, betas=(0.9, 0.999))
+        self.optim = Adam(self.model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=0.01)
         self.criterion = nn.NLLLoss()
 
     def train(self, epoch):

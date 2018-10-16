@@ -140,3 +140,11 @@ optional arguments:
 
 ## Author
 Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatter.co.kr)
+
+## License
+
+This project following Apache 2.0 License as written in LICENSE file
+
+Copyright 2018 Junseong Kim, Scatter Lab, respective BERT contributors
+
+Copyright (c) 2018 Alexander Rush : [The Annotated Trasnformer](https://github.com/harvardnlp/annotated-transformer)
