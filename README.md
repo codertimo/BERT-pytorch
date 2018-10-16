@@ -1,5 +1,10 @@
 # BERT-pytorch
 
+[![LICENSE](https://img.shields.io/github/license/codertimo/BERT-pytorch.svg)](https://github.com/kor2vec/kor2vec/blob/master/LICENSE)
+![GitHub issues](https://img.shields.io/github/issues/codertimo/BERT-pytorch.svg)
+[![GitHub stars](https://img.shields.io/github/stars/codertimo/BERT-pytorch.svg)](https://github.com/kor2vec/kor2vec/stargazers)
+
+
 Pytorch implementation of Google AI's 2018 BERT, with simple annotation
 
 > BERT 2018 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
@@ -21,6 +26,7 @@ and I expect many further papers about BERT will be published very soon.
 This repo is implementation of BERT. Code is very simple and easy to understand fastly.
 Some of these codes are based on [The Annotated Transformer](http://nlp.seas.harvard.edu/2018/04/03/attention.html)
 
+Currently this project is working on progress. And the code is not verified yet.
 
 ## Language Model Pre-training
 
