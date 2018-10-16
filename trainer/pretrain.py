@@ -23,7 +23,7 @@ class BERTTrainer:
         self.test_data = test_dataloader
 
         self.optim = Adam(self.model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=0.01)
-        self.criterion = nn.NLLLoss()
+        self.criterion = nn.NLLLoss(ignore_index=0)
 
     def train(self, epoch):
         self.iteration(epoch, self.train_data)
@@ -51,7 +51,6 @@ class BERTTrainer:
             loss = next_loss + mask_loss
 
             correct = next_sent_output.argmax(dim=-1).eq(data["is_next"]).sum().item()
-            acc = correct / data["is_next"].nelement() * 100
 
             avg_loss += loss.item()
             total_correct += correct
@@ -64,14 +63,13 @@ class BERTTrainer:
 
             post_fix = {
                 "epoch": epoch,
-                "loss": loss.item(),
                 "avg_loss": avg_loss / (i + 1),
-                "acc": acc,
                 "avg_acc": total_correct / total_element * 100
             }
             data_iter.set_postfix(post_fix)
 
-        print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_iter))
+        print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_iter), "total_acc=",
+              total_correct * 100.0 / total_element)
 
     def save(self, output_dir, epoch, file_name="bert_trained_ep%d.model"):
         if isinstance(self.model, nn.DataParallel):

@@ -5,13 +5,13 @@ import torch
 
 
 class BERTDataset(Dataset):
-    def __init__(self, corpus_path, vocab, seq_len, encoding="utf-8"):
+    def __init__(self, corpus_path, vocab, seq_len, encoding="utf-8", corpus_lines=None):
         self.vocab = vocab
         self.seq_len = seq_len
 
         self.datas = []
         with open(corpus_path, "r", encoding=encoding) as f:
-            for line in tqdm.tqdm(f, desc="Loading Dataset"):
+            for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
                 t1, t2, t1_l, t2_l, is_next = line[:-1].split("\t")
                 t1_l, t2_l = [[token for token in label.split(" ")] for label in [t1_l, t2_l]]
                 is_next = int(is_next)
