@@ -13,7 +13,8 @@ class BERTDataset(Dataset):
         with open(corpus_path, "r", encoding=encoding) as f:
             for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
                 t1, t2, t1_l, t2_l, is_next = line[:-1].split("\t")
-                t1_l, t2_l = [[token for token in label.split(" ")] for label in [t1_l, t2_l]]
+                t1, t2 = [[int(token) for token in t.split(",")] for t in [t1, t2]]
+                t1_l, t2_l = [[int(token) for token in label.split(",")] for label in [t1_l, t2_l]]
                 is_next = int(is_next)
                 self.datas.append({"t1": t1, "t2": t2, "t1_label": t1_l, "t2_label": t2_l, "is_next": is_next})
 
@@ -22,11 +23,11 @@ class BERTDataset(Dataset):
 
     def __getitem__(self, item):
         # [CLS] tag = SOS tag, [SEP] tag = EOS tag
-        t1 = self.vocab.to_seq(self.datas[item]["t1"], with_sos=True, with_eos=True)
-        t2 = self.vocab.to_seq(self.datas[item]["t2"], with_eos=True)
+        t1 = [self.vocab.sos_index] + self.datas[item]["t1"] + [self.vocab.eos_index]
+        t2 = self.datas[item]["t2"] + [self.vocab.eos_index]
 
-        t1_label = [0] + self.vocab.to_seq(self.datas[item]["t1_label"]) + [0]
-        t2_label = self.vocab.to_seq(self.datas[item]["t2_label"]) + [0]
+        t1_label = [0] + self.datas[item]["t1_label"] + [0]
+        t2_label = self.datas[item]["t2_label"] + [0]
 
         segment_label = ([1 for _ in range(len(t1))] + [2 for _ in range(len(t2))])[:self.seq_len]
         bert_input = (t1 + t2)[:self.seq_len]
@@ -62,20 +63,21 @@ class BERTDatasetCreator(Dataset):
 
                 # 80% randomly change token to make token
                 if prob < 0.8:
-                    tokens[i] = "<mask>"
+                    tokens[i] = self.vocab.mask_index
 
                 # 10% randomly change token to random token
                 elif 0.8 <= prob < 0.9:
-                    tokens[i] = self.vocab.itos[random.randrange(len(self.vocab))]
+                    tokens[i] = random.randrange(len(self.vocab))
 
                 # 10% randomly change token to current token
                 elif prob >= 0.9:
-                    pass
+                    tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
 
-                output_label.append(token)
+                output_label.append(self.vocab.stoi.get(token, self.vocab.unk_index))
 
             else:
-                output_label.append("<pad>")
+                tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
+                output_label.append(0)
 
         return tokens, output_label
 

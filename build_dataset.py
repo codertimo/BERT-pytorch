@@ -1,6 +1,6 @@
 from dataset.dataset import BERTDatasetCreator
 from dataset import WordVocab
-from multiprocessing import Pool
+
 import argparse
 import tqdm
 
@@ -17,20 +17,12 @@ word_vocab = WordVocab.load_vocab(args.vocab_path)
 builder = BERTDatasetCreator(corpus_path=args.corpus_path, vocab=word_vocab, seq_len=None, encoding=args.encoding)
 batch_size = args.batch_size
 
-def work(item):
-    return builder[item]
-
-
 with open(args.output_path, 'w', encoding=args.encoding) as f:
-    for index in tqdm.tqdm(range(0, len(builder), batch_size), desc="Building Dataset",
+    for index in tqdm.tqdm(range(len(builder)), desc="Building Dataset",
                            total=len(builder) / batch_size):
-
-        with Pool(args.workers) as p:
-            output_items = p.map(work, [i for i in range(index, index + batch_size)])
-
-        for data in output_items:
-            output_form = "%s\t%s\t%s\t%s\t%d\n"
-            t1_text, t2_text = [" ".join(t) for t in [data["t1_random"], data["t2_random"]]]
-            t1_label, t2_label = [" ".join([str(i) for i in label]) for label in [data["t1_label"], data["t2_label"]]]
-            output = output_form % (t1_text, t2_text, t1_label, t2_label, data["is_next"])
-            f.write(output)
+        data = builder[index]
+        output_form = "%s\t%s\t%s\t%s\t%d\n"
+        t1_text, t2_text = [",".join([str(i) for i in t]) for t in [data["t1_random"], data["t2_random"]]]
+        t1_label, t2_label = [",".join([str(i) for i in label]) for label in [data["t1_label"], data["t2_label"]]]
+        output = output_form % (t1_text, t2_text, t1_label, t2_label, data["is_next"])
+        f.write(output)
