@@ -1,8 +1,6 @@
 from torch.utils.data import Dataset
-from .vocab import WordVocab
 import tqdm
 import random
-import argparse
 import torch
 
 
@@ -17,13 +15,7 @@ class BERTDataset(Dataset):
                 t1, t2, t1_l, t2_l, is_next = line[:-1].split("\t")
                 t1_l, t2_l = [[token for token in label.split(" ")] for label in [t1_l, t2_l]]
                 is_next = int(is_next)
-                self.datas.append({
-                    "t1": t1,
-                    "t2": t2,
-                    "t1_label": t1_l,
-                    "t2_label": t2_l,
-                    "is_next": is_next
-                })
+                self.datas.append({"t1": t1, "t2": t2, "t1_label": t1_l, "t2_label": t2_l, "is_next": is_next})
 
     def __len__(self):
         return len(self.datas)
@@ -33,11 +25,19 @@ class BERTDataset(Dataset):
         t1 = self.vocab.to_seq(self.datas[item]["t1"], with_sos=True, with_eos=True)
         t2 = self.vocab.to_seq(self.datas[item]["t2"], with_eos=True)
 
-        t1_label = self.vocab.to_seq(self.datas[item]["t1_label"])
-        t2_label = self.vocab.to_seq(self.datas[item]["t2_label"])
+        t1_label = [0] + self.vocab.to_seq(self.datas[item]["t1_label"]) + [0]
+        t2_label = self.vocab.to_seq(self.datas[item]["t2_label"]) + [0]
 
-        output = {"t1": t1, "t2": t2,
-                  "t1_label": t1_label, "t2_label": t2_label,
+        segment_label = ([1 for _ in range(len(t1))] + [2 for _ in range(len(t2))])[:self.seq_len]
+        bert_input = (t1 + t2)[:self.seq_len]
+        bert_label = (t1_label + t2_label)[:self.seq_len]
+
+        padding = [self.vocab.pad_index for _ in range(self.seq_len - len(t1) - len(t2))]
+        bert_input.extend(padding), bert_label.extend(padding), segment_label.extend(padding)
+
+        output = {"bert_input": bert_input,
+                  "bert_label": bert_label,
+                  "segment_label": segment_label,
                   "is_next": self.datas[item]["is_next"]}
 
         return {key: torch.tensor(value) for key, value in output.items()}

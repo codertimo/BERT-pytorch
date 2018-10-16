@@ -20,15 +20,11 @@ class BERT(nn.Module):
                               dropout=dropout)
              for _ in range(n_layers)])
 
-    def forward(self, x):
+    def forward(self, x, segment_info):
         mask = (x > 0).unsqueeze(1).repeat(1, x.size(1), 1)
 
-        # sequence -> embedding : (batch_size, seq_len) -> (batch_size, seq_len, embed_size)
-        x = self.embedding(x)
+        x = self.embedding(x, segment_info)
 
-        # embedding through the transformer self-attention
-        # embedding (batch_size, seq_len, embed_size = hidden) -> transformer_output (batch_size, seq_len, hidden)
-        # loop transformer (batch_size, seq_len, hidden) -> transformer_output (batch_size, seq_len, hidden)
         for transformer in self.transformer_blocks:
             x = transformer.forward(x, mask)
 

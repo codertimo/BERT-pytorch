@@ -11,5 +11,5 @@ class BERTEmbedding(nn.Module):
         self.position = PositionalEmbedding(self.token.embedding_dim, dropout=dropout)
         self.segment = SegmentEmbedding(embed_size=self.token.embedding_dim)
 
-    def forward(self, sequence):
-        return self.position(self.token(sequence))
+    def forward(self, sequence, segment_label):
+        return self.position(self.token(sequence)) + self.segment(segment_label)
