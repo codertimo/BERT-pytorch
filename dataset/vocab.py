@@ -121,13 +121,20 @@ class WordVocab(Vocab):
         print("Building Vocab")
         counter = Counter()
         for line in tqdm.tqdm(texts):
-            words = line.replace("\n", "").replace("\t", "").split()
+            if isinstance(line, list):
+                words = line
+            else:
+                words = line.replace("\n", "").replace("\t", "").split()
+
             for word in words:
                 counter[word] += 1
         super().__init__(counter, max_size=max_size, min_freq=min_freq)
 
     def to_seq(self, sentence, seq_len=None, with_eos=False, with_sos=False, with_len=False):
-        seq = [self.stoi.get(word, self.unk_index) for word in sentence.split()]
+        if isinstance(sentence, str):
+            sentence = sentence.split()
+
+        seq = [self.stoi.get(word, self.unk_index) for word in sentence]
 
         if with_eos:
             seq += [self.eos_index]  # this would be index 1
@@ -158,18 +165,3 @@ class WordVocab(Vocab):
     def load_vocab(vocab_path: str) -> 'WordVocab':
         with open(vocab_path, "rb") as f:
             return pickle.load(f)
-
-
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--corpus_path", required=True, type=str)
-    parser.add_argument("-o", "--output_path", required=True, type=str)
-    parser.add_argument("-s", "--vocab_size", type=int, default=None)
-    parser.add_argument("-e", "--encoding", type=str, default="utf-8")
-    parser.add_argument("-m", "--min_freq", type=int, default=1)
-    args = parser.parse_args()
-
-    with open(args.corpus_path, "r", encoding=args.encoding) as f:
-        vocab = WordVocab(f, max_size=args.vocab_size, min_freq=args.min_freq)

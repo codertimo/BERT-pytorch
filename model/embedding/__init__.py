@@ -1,1 +1,1 @@
-from .bert_embedding import BERTEmbedding
+from .bert import BERTEmbedding
