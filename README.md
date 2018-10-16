@@ -68,6 +68,11 @@ not directly captured by language modeling
 
 
 ## Usage
+**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) seperator**
+```
+Welcome to the \t the jungle \n
+I can stay \t here all night \n
+```
 
 ### 1. Building vocab based on your corpus
 ```shell
