@@ -9,7 +9,8 @@ import os
 
 
 class BERTTrainer:
-    def __init__(self, bert: BERT, vocab_size, train_dataloader, test_dataloader=None):
+    def __init__(self, bert: BERT, vocab_size, train_dataloader, test_dataloader=None,
+                 lr=1e-4, betas=(0.9, 0.999), weight_decay=0.01):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         self.bert = bert
@@ -22,7 +23,7 @@ class BERTTrainer:
         self.train_data = train_dataloader
         self.test_data = test_dataloader
 
-        self.optim = Adam(self.model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=0.01)
+        self.optim = Adam(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
         self.criterion = nn.NLLLoss(ignore_index=0)
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
 
