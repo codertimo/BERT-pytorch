@@ -24,6 +24,7 @@ class BERTTrainer:
 
         self.optim = Adam(self.model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=0.01)
         self.criterion = nn.NLLLoss(ignore_index=0)
+        print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
 
     def train(self, epoch):
         self.iteration(epoch, self.train_data)
