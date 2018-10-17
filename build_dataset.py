@@ -1,6 +1,5 @@
 from dataset.dataset import BERTDatasetCreator
 from dataset import WordVocab
-from multiprocessing import Pool
 
 import argparse
 import tqdm
