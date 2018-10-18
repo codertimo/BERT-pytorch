@@ -20,6 +20,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
+
       - save_cache:
           paths:
             - ./venv
@@ -30,6 +31,7 @@ jobs:
           command: |
             . venv/bin/activate
             python -m unittest test.py
+
       - store_artifacts:
           path: test-reports
           destination: test-reports
@@ -53,6 +55,7 @@ jobs:
             . venv/bin/activate
             python setup.py verify
             pip install twine
+
       - save_cache:
           key: v1-dependency-cache-{{ checksum "setup.py" }}-{{ checksum "Makefile" }}
           paths:
@@ -66,10 +69,12 @@ jobs:
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = codertimo" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+
       - run:
           name: create packages
           command: |
             make package
+
       - run:
           name: upload to pypi
           command: |

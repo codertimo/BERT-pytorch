@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
-from bert_pytorch import __version__
 import os
 import sys
+
+__version__ = "0.0.1a0"
 
 with open("requirements.txt") as f:
     require_packages = [line[:-1] for line in f]
