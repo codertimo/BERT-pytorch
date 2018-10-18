@@ -4,8 +4,8 @@
 ![GitHub issues](https://img.shields.io/github/issues/codertimo/BERT-pytorch.svg)
 [![GitHub stars](https://img.shields.io/github/stars/codertimo/BERT-pytorch.svg)](https://github.com/kor2vec/kor2vec/stargazers)
 [![CircleCI](https://circleci.com/gh/codertimo/BERT-pytorch.svg?style=shield)](https://circleci.com/gh/kor2vec/kor2vec)
-[![PyPI](https://img.shields.io/pypi/v/bert_pytorch.svg)](https://pypi.org/project/bert_pytorch/)
-[![PyPI - Status](https://img.shields.io/pypi/status/bert_pytorch.svg)](https://pypi.org/project/bert_pytorch/)
+[![PyPI](https://img.shields.io/pypi/v/bert-pytorch.svg)](https://pypi.org/project/bert_pytorch/)
+[![PyPI - Status](https://img.shields.io/pypi/status/bert-pytorch.svg)](https://pypi.org/project/bert_pytorch/)
 
 Pytorch implementation of Google AI's 2018 BERT, with simple annotation
 
