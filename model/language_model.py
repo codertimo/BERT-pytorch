@@ -3,11 +3,13 @@ import torch.nn as nn
 
 
 class BERTLM(nn.Module):
+    """
+    BERT Language Model
+    Next Sentence Prediction Model + Masked Language Model
+    """
+
     def __init__(self, bert: BERT, vocab_size):
         """
-        BERT Language Model
-        Next Sentence Prediction Model + Masked Language Model
-
         :param bert: BERT model which should be trained
         :param vocab_size: total vocab size for masked_lm
         """
@@ -23,10 +25,12 @@ class BERTLM(nn.Module):
 
 
 class NextSentencePrediction(nn.Module):
+    """
+    2-class classification model : is_next, is_not_next
+    """
+
     def __init__(self, hidden):
         """
-        2-class classification model : is_next, is_not_next
-
         :param hidden: BERT model output size
         """
         super().__init__()
@@ -38,11 +42,13 @@ class NextSentencePrediction(nn.Module):
 
 
 class MaskedLanguageModel(nn.Module):
+    """
+    predicting origin token from masked input sequence
+    n-class classification problem, n-class = vocab_size
+    """
+
     def __init__(self, hidden, vocab_size):
         """
-        predicting origin token from masked input sequence
-        n-class classification problem, n-class = vocab_size
-
         :param hidden: output size of BERT model
         :param vocab_size: total vocab size
         """

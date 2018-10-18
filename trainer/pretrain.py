@@ -9,16 +9,21 @@ import tqdm
 
 
 class BERTTrainer:
+    """
+    BERTTrainer make the pretrained BERT model with two LM training method.
+
+        1. Masked Language Model : 3.3.1 Task #1: Masked LM
+        2. Next Sentence prediction : 3.3.2 Task #2: Next Sentence Prediction
+
+    please check the details on README.md with simple example.
+
+    """
+
     def __init__(self, bert: BERT, vocab_size,
                  train_dataloader: DataLoader, test_dataloader: DataLoader = None,
                  lr: float = 1e-4, betas=(0.9, 0.999), weight_decay: float = 0.01,
                  with_cuda: bool = True, log_freq: int = 10):
         """
-        BERTTrainer make the pretrained BERT model with two LM training method.
-        1. Masked Language Model : 3.3.1 Task #1: Masked LM
-        2. Next Sentence prediction : 3.3.2 Task #2: Next Sentence Prediction
-        please check the details on README.md with simple example.
-
         :param bert: BERT model which you want to train
         :param vocab_size: total word vocab size
         :param train_dataloader: train dataset data loader

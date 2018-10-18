@@ -1,5 +1,4 @@
-from dataset.dataset import BERTDatasetCreator
-from dataset import WordVocab
+from dataset import WordVocab, BERTDatasetCreator
 
 import argparse
 import tqdm
@@ -20,9 +19,11 @@ builder = BERTDatasetCreator(corpus_path=args.corpus_path,
                              vocab=word_vocab, seq_len=None,
                              encoding=args.encoding)
 
+output_form = "%s\t%s\t%s\t%s\t%d\n"
 
-def work(i):
-    data = builder[i]
+
+def work(index):
+    data = builder[index]
 
     data["t1_random"], data["t2_random"] = [",".join([str(i) for i in t])
                                             for t in [data["t1_random"], data["t2_random"]]]
@@ -30,16 +31,11 @@ def work(i):
     data["t1_label"], data["t2_label"] = [",".join([str(i) for i in label])
                                           for label in [data["t1_label"], data["t2_label"]]]
 
-    return data
+    output = output_form % (data["t1_random"], data["t2_random"],
+                            data["t1_label"], data["t2_label"], data["is_next"])
+    return output
 
 
-output_form = "%s\t%s\t%s\t%s\t%d\n"
-
-f = open(args.output_path, 'w', encoding=args.encoding, buffering=1)
-
-for i in tqdm.tqdm(range(len(builder)), total=len(builder), desc="Building Dataset"):
-    d = work(i)
-    output = output_form % (d["t1_random"], d["t2_random"], d["t1_label"], d["t2_label"], d["is_next"])
-    f.write(output)
-
-f.close()
+with open(args.output_path, 'w', encoding=args.encoding) as f:
+    for i in tqdm.tqdm(range(len(builder)), total=len(builder), desc="Building Dataset"):
+        f.write(work(i))

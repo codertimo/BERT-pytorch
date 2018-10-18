@@ -5,10 +5,12 @@ from model.embedding import BERTEmbedding
 
 
 class BERT(nn.Module):
+    """
+    BERT model : Bidirectional Encoder Representations from Transformers.
+    """
+
     def __init__(self, vocab_size, hidden=768, n_layers=12, attn_heads=12, dropout=0.1):
         """
-        BERT model : Bidirectional Encoder Representations from Transformers.
-
         :param vocab_size: vocab_size of total words
         :param hidden: BERT model hidden size
         :param n_layers: numbers of Transformer blocks(layers)

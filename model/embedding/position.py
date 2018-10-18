@@ -4,9 +4,6 @@ import math
 
 
 class PositionalEmbedding(nn.Module):
-    """
-    Implement the Positional Embedding function
-    """
 
     def __init__(self, d_model, max_len=512):
         super().__init__()

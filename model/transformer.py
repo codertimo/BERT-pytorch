@@ -5,11 +5,13 @@ from .utils import SublayerConnection, PositionwiseFeedForward
 
 
 class TransformerBlock(nn.Module):
+    """
+    Bidirectional Encoder = Transformer (self-attention)
+    Transformer = MultiHead_Attention + Feed_Forward with sublayer connection
+    """
+
     def __init__(self, hidden, attn_heads, feed_forward_hidden, dropout):
         """
-        Bidirectional Encoder = Transformer (self-attention)
-        Transformer = MultiHead_Attention + Feed_Forward with sublayer connection
-
         :param hidden: hidden size of transformer
         :param attn_heads: head sizes of multi-head attention
         :param feed_forward_hidden: feed_forward_hidden, usually 4*hidden_size
