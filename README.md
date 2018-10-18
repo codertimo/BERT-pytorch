@@ -35,8 +35,8 @@ Currently this project is working on progress. And the code is not verified yet.
 pip install bert-pytorch
 ```
 
+## Quickstart
 
-## Usage
 **NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) separator**
 ```
 Welcome to the \t the jungle \n
@@ -47,31 +47,15 @@ I can stay \t here all night \n
 ```shell
 bert-vocab -c data/corpus.small -o data/corpus.small.vocab
 ```
-```shell
-usage: bert-vocab [-h] -c CORPUS_PATH -o OUTPUT_PATH [-s VOCAB_SIZE]
-                  [-e ENCODING] [-m MIN_FREQ]
-```
+
 ### 2. Building BERT train dataset with your corpus
 ```shell
 bert-dataset -d data/corpus.small -v data/corpus.small.vocab -o data/dataset.small
 ```
 
-```shell
-usage: bert-dataset [-h] -v VOCAB_PATH -c CORPUS_PATH [-e ENCODING] -o
-                    OUTPUT_PATH [-w WORKERS]
-```
-
 ### 3. Train your own BERT model
 ```shell
 bert -d data/dataset.small -v data/corpus.small.vocab -o output/
-```
-```shell
-usage: bert [-h] -d TRAIN_DATASET [-t TEST_DATASET] -v VOCAB_PATH -o
-            OUTPUT_DIR [-hs HIDDEN] [-n LAYERS] [-a ATTN_HEADS] [-s SEQ_LEN]
-            [-b BATCH_SIZE] [-e EPOCHS] [-w NUM_WORKERS]
-            [--corpus_lines CORPUS_LINES] [--lr LR]
-            [--adam_weight_decay ADAM_WEIGHT_DECAY] [--adam_beta1 ADAM_BETA1]
-            [--adam_beta2 ADAM_BETA2] [--log_freq LOG_FREQ] [-c CUDA]
 ```
 
 ## Language Model Pre-training
@@ -117,7 +101,6 @@ not directly captured by language modeling
 
 1. Randomly 50% of next sentence, gonna be continuous sentence.
 2. Randomly 50% of next sentence, gonna be unrelated sentence.
-
 
 
 ## Author
