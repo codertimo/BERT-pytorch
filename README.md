@@ -74,7 +74,7 @@ not directly captured by language modeling
 
 
 ## Usage
-**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) seperator**
+**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) separator**
 ```
 Welcome to the \t the jungle \n
 I can stay \t here all night \n
