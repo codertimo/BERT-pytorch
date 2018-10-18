@@ -4,11 +4,12 @@ import math
 
 
 class PositionalEmbedding(nn.Module):
-    "Implement the PE function."
+    """
+    Implement the Positional Embedding function
+    """
 
-    def __init__(self, d_model, dropout, max_len=512):
+    def __init__(self, d_model, max_len=512):
         super().__init__()
-        self.dropout = nn.Dropout(p=dropout)
 
         # Compute the positional encodings once in log space.
         pe = torch.zeros(max_len, d_model).float()
@@ -24,6 +25,4 @@ class PositionalEmbedding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        x = x + self.pe[:, :x.size(1)]
-        return self.dropout(x)
-5
+        return self.pe[:, :x.size(1)]
