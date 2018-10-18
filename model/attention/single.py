@@ -6,10 +6,13 @@ import math
 
 
 class Attention(nn.Module):
+    """
+    Compute 'Scaled Dot Product Attention
+    """
+
     def forward(self, query, key, value, mask=None, dropout=None):
-        "Compute 'Scaled Dot Product Attention'"
-        d_k = query.size(-1)
-        scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
+        scores = torch.matmul(query, key.transpose(-2, -1)) \
+                 / math.sqrt(query.size(-1))
 
         if mask is not None:
             scores = scores.masked_fill(mask == 0, -1e9)

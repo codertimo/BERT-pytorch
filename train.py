@@ -27,6 +27,9 @@ parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--adam_weight_decay", type=float, default=0.01)
 parser.add_argument("--adam_beta1", type=float, default=0.9)
 parser.add_argument("--adam_beta2", type=float, default=0.999)
+parser.add_argument("--log_freq", type=int, default=10)
+
+parser.add_argument("-c", "--cuda", type=bool, default=True)
 
 args = parser.parse_args()
 

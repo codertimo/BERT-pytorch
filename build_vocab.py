@@ -1,4 +1,5 @@
 import argparse
+
 from dataset import WordVocab
 
 parser = argparse.ArgumentParser()
@@ -13,5 +14,4 @@ with open(args.corpus_path, "r", encoding=args.encoding) as f:
     vocab = WordVocab(f, max_size=args.vocab_size, min_freq=args.min_freq)
 
 print("VOCAB SIZE:", len(vocab))
-
 vocab.save_vocab(args.output_path)
