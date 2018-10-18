@@ -1,5 +1,6 @@
-from .bert import BERT
 import torch.nn as nn
+
+from .bert import BERT
 
 
 class BERTLM(nn.Module):
