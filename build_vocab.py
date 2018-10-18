@@ -1,6 +1,6 @@
 import argparse
 
-from dataset import WordVocab
+from bert_pytorch.dataset import WordVocab
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--corpus_path", required=True, type=str)

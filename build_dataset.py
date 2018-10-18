@@ -1,4 +1,4 @@
-from dataset import WordVocab, BERTDatasetCreator
+from bert_pytorch.dataset import WordVocab, BERTDatasetCreator
 
 import argparse
 import tqdm
