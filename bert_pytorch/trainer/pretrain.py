@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from model import BERTLM, BERT
+from ..model import BERTLM, BERT
 
 import tqdm
 
