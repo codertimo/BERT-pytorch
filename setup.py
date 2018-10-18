@@ -42,6 +42,13 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
+    entry_points={
+        'console_scripts': [
+            'bert = bert_pytorch.train:train',
+            'bert-dataset = bert_pytorch.build_dataset:build',
+            'bert-vocab = bert_pytorch.build_vocab:build',
+        ]
+    },
     cmdclass={
         'verify': VerifyVersionCommand,
     }

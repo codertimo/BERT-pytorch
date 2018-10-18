@@ -30,6 +30,50 @@ Some of these codes are based on [The Annotated Transformer](http://nlp.seas.har
 
 Currently this project is working on progress. And the code is not verified yet.
 
+## Installation
+```
+pip install bert-pytorch
+```
+
+
+## Usage
+**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) separator**
+```
+Welcome to the \t the jungle \n
+I can stay \t here all night \n
+```
+
+### 1. Building vocab based on your corpus
+```shell
+bert-vocab -c data/corpus.small -o data/corpus.small.vocab
+```
+```shell
+usage: bert-vocab [-h] -c CORPUS_PATH -o OUTPUT_PATH [-s VOCAB_SIZE]
+                  [-e ENCODING] [-m MIN_FREQ]
+```
+### 2. Building BERT train dataset with your corpus
+```shell
+bert-dataset -d data/corpus.small -v data/corpus.small.vocab -o data/dataset.small
+```
+
+```shell
+usage: bert-dataset [-h] -v VOCAB_PATH -c CORPUS_PATH [-e ENCODING] -o
+                    OUTPUT_PATH [-w WORKERS]
+```
+
+### 3. Train your own BERT model
+```shell
+bert -d data/dataset.small -v data/corpus.small.vocab -o output/
+```
+```shell
+usage: bert [-h] -d TRAIN_DATASET [-t TEST_DATASET] -v VOCAB_PATH -o
+            OUTPUT_DIR [-hs HIDDEN] [-n LAYERS] [-a ATTN_HEADS] [-s SEQ_LEN]
+            [-b BATCH_SIZE] [-e EPOCHS] [-w NUM_WORKERS]
+            [--corpus_lines CORPUS_LINES] [--lr LR]
+            [--adam_weight_decay ADAM_WEIGHT_DECAY] [--adam_beta1 ADAM_BETA1]
+            [--adam_beta2 ADAM_BETA2] [--log_freq LOG_FREQ] [-c CUDA]
+```
+
 ## Language Model Pre-training
 
 In the paper, authors shows the new language model training methods, 
@@ -74,70 +118,6 @@ not directly captured by language modeling
 1. Randomly 50% of next sentence, gonna be continuous sentence.
 2. Randomly 50% of next sentence, gonna be unrelated sentence.
 
-
-## Usage
-**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) separator**
-```
-Welcome to the \t the jungle \n
-I can stay \t here all night \n
-```
-
-### 1. Building vocab based on your corpus
-```shell
-python build_vocab.py -c data/corpus.small -o data/corpus.small.vocab
-```
-```shell
-usage: build_vocab.py [-h] -c CORPUS_PATH -o OUTPUT_PATH [-s VOCAB_SIZE]
-                      [-e ENCODING] [-m MIN_FREQ]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CORPUS_PATH, --corpus_path CORPUS_PATH
-  -o OUTPUT_PATH, --output_path OUTPUT_PATH
-  -s VOCAB_SIZE, --vocab_size VOCAB_SIZE
-  -e ENCODING, --encoding ENCODING
-  -m MIN_FREQ, --min_freq MIN_FREQ
-
-```
-### 2. Building BERT train dataset with your corpus
-```shell
-python build_dataset.py -d data/corpus.small -v data/corpus.small.vocab -o data/dataset.small
-```
-
-```shell
-usage: build_dataset.py [-h] -v VOCAB_PATH -c CORPUS_PATH [-e ENCODING] -o
-                        OUTPUT_PATH
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v VOCAB_PATH, --vocab_path VOCAB_PATH
-  -c CORPUS_PATH, --corpus_path CORPUS_PATH
-  -e ENCODING, --encoding ENCODING
-  -o OUTPUT_PATH, --output_path OUTPUT_PATH
-```
-
-### 3. Train your own BERT model
-```shell
-python train.py -d data/dataset.small -v data/corpus.small.vocab -o output/
-```
-```shell
-usage: train.py [-h] -d TRAIN_DATASET [-t TEST_DATASET] -v VOCAB_PATH -o
-                OUTPUT_DIR [-hs HIDDEN] [-n LAYERS] [-a ATTN_HEADS]
-                [-s SEQ_LEN] [-b BATCH_SIZE] [-e EPOCHS]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d TRAIN_DATASET, --train_dataset TRAIN_DATASET
-  -t TEST_DATASET, --test_dataset TEST_DATASET
-  -v VOCAB_PATH, --vocab_path VOCAB_PATH
-  -o OUTPUT_DIR, --output_dir OUTPUT_DIR
-  -hs HIDDEN, --hidden HIDDEN
-  -n LAYERS, --layers LAYERS
-  -a ATTN_HEADS, --attn_heads ATTN_HEADS
-  -s SEQ_LEN, --seq_len SEQ_LEN
-  -b BATCH_SIZE, --batch_size BATCH_SIZE
-  -e EPOCHS, --epochs EPOCHS
-```
 
 
 ## Author
