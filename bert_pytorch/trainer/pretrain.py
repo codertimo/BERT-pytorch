@@ -19,8 +19,8 @@ class BERTTrainer:
 
     """
 
-    def __init__(self, bert: BERT, vocab_size,
-                 train_dataloader: DataLoader, test_dataloader: DataLoader = None,
+    def __init__(self, bert, vocab_size,
+                 train_dataloader, test_dataloader=None,
                  lr: float = 1e-4, betas=(0.9, 0.999), weight_decay: float = 0.01,
                  with_cuda: bool = True, log_freq: int = 10):
         """
@@ -40,9 +40,9 @@ class BERTTrainer:
         self.device = torch.device("cuda:0" if cuda_condition else "cpu")
 
         # This BERT model will be saved every epoch
-        self.bert: BERT = bert
+        self.bert = bert
         # Initialize the BERT Language Model, with BERT model
-        self.model: BERTLM = BERTLM(bert, vocab_size).to(self.device)
+        self.model = BERTLM(bert, vocab_size).to(self.device)
 
         # Distributed GPU training if CUDA can detect more than 1 GPU
         if torch.cuda.device_count() > 1:
@@ -50,8 +50,8 @@ class BERTTrainer:
             self.model = nn.DataParallel(self.model)
 
         # Setting the train and test data loader
-        self.train_data: DataLoader = train_dataloader
-        self.test_data: DataLoader = test_dataloader
+        self.train_data = train_dataloader
+        self.test_data = test_dataloader
 
         # Setting the Adam optimizer with hyper-param
         self.optim = Adam(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
