@@ -1,6 +1,6 @@
 import argparse
 
-from .dataset import WordVocab
+from bert_pytorch.dataset import WordVocab
 
 
 def build():

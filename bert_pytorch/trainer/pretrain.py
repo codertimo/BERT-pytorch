@@ -19,8 +19,8 @@ class BERTTrainer:
 
     """
 
-    def __init__(self, bert, vocab_size,
-                 train_dataloader, test_dataloader=None,
+    def __init__(self, bert: BERT, vocab_size: int,
+                 train_dataloader: DataLoader, test_dataloader: DataLoader = None,
                  lr: float = 1e-4, betas=(0.9, 0.999), weight_decay: float = 0.01,
                  with_cuda: bool = True, log_freq: int = 10):
         """

@@ -16,22 +16,21 @@ def train():
     parser.add_argument("-o", "--output_path", required=True, type=str)
 
     parser.add_argument("-hs", "--hidden", type=int, default=256)
-    parser.add_argument("-n", "--layers", type=int, default=8)
+    parser.add_argument("-l", "--layers", type=int, default=8)
     parser.add_argument("-a", "--attn_heads", type=int, default=8)
     parser.add_argument("-s", "--seq_len", type=int, default=20)
 
     parser.add_argument("-b", "--batch_size", type=int, default=64)
     parser.add_argument("-e", "--epochs", type=int, default=10)
     parser.add_argument("-w", "--num_workers", type=int, default=5)
+    parser.add_argument("-c", "--with_cuda", type=bool, default=True)
+    parser.add_argument("--log_freq", type=int, default=10)
     parser.add_argument("--corpus_lines", type=int, default=None)
 
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--adam_weight_decay", type=float, default=0.01)
     parser.add_argument("--adam_beta1", type=float, default=0.9)
     parser.add_argument("--adam_beta2", type=float, default=0.999)
-    parser.add_argument("--log_freq", type=int, default=10)
-
-    parser.add_argument("-c", "--cuda", type=bool, default=True)
 
     args = parser.parse_args()
 
@@ -56,7 +55,8 @@ def train():
 
     print("Creating BERT Trainer")
     trainer = BERTTrainer(bert, len(vocab), train_dataloader=train_data_loader, test_dataloader=test_data_loader,
-                          lr=args.lr, betas=(args.adam_beta1, args.adam_beta2), weight_decay=args.adam_weight_decay)
+                          lr=args.lr, betas=(args.adam_beta1, args.adam_beta2), weight_decay=args.adam_weight_decay,
+                          with_cuda=args.with_cuda, log_freq=args.log_freq)
 
     print("Training Start")
     for epoch in range(args.epochs):
