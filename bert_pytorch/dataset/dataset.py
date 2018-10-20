@@ -58,7 +58,7 @@ class BERTDataset(Dataset):
                     tokens[i] = random.randrange(len(self.vocab))
 
                 # 10% randomly change token to current token
-                elif prob >= prob * 0.9:
+                else:
                     tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
 
                 output_label.append(self.vocab.stoi.get(token, self.vocab.unk_index))
