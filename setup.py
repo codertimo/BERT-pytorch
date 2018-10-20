@@ -6,7 +6,7 @@ import sys
 __version__ = "0.0.1a4"
 
 with open("requirements.txt") as f:
-    require_packages = [line[:-1] for line in f]
+    require_packages = [line[:-1] if line[-1] == "\n" else line for line in f]
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
