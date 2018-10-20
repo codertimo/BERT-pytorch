@@ -24,7 +24,7 @@ class BERTTrainer:
     def __init__(self, bert: BERT, vocab_size: int,
                  train_dataloader: DataLoader, test_dataloader: DataLoader = None,
                  lr: float = 1e-4, betas=(0.9, 0.999), weight_decay: float = 0.01,
-                 with_cuda: bool = True, log_freq: int = 10):
+                 with_cuda: bool = True, cuda_devices=None, log_freq: int = 10):
         """
         :param bert: BERT model which you want to train
         :param vocab_size: total word vocab size
@@ -47,9 +47,9 @@ class BERTTrainer:
         self.model = BERTLM(bert, vocab_size).to(self.device)
 
         # Distributed GPU training if CUDA can detect more than 1 GPU
-        if torch.cuda.device_count() > 1:
+        if with_cuda and torch.cuda.device_count() > 1:
             print("Using %d GPUS for BERT" % torch.cuda.device_count())
-            self.model = DataParallelModel(self.model)
+            self.model = DataParallelModel(self.model, device_ids=cuda_devices)
 
         # Setting the train and test data loader
         self.train_data = train_dataloader
@@ -59,7 +59,9 @@ class BERTTrainer:
         self.optim = Adam(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
 
         # Using Negative Log Likelihood Loss function for predicting the masked_token
-        self.criterion = DataParallelCriterion(nn.NLLLoss(ignore_index=0))
+        self.criterion = nn.NLLLoss(ignore_index=0)
+        if with_cuda and torch.cuda.device_count() > 0:
+            self.criterion = DataParallelCriterion(self.criterion, device_ids=cuda_devices)
 
         self.log_freq = log_freq
 
