@@ -3,7 +3,7 @@ from setuptools.command.install import install
 import os
 import sys
 
-__version__ = "0.0.1a2"
+__version__ = "0.0.1a3"
 
 with open("requirements.txt") as f:
     require_packages = [line[:-1] for line in f]
@@ -44,9 +44,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'bert = bert_pytorch.train:train',
-            'bert-dataset = bert_pytorch.build_dataset:build',
-            'bert-vocab = bert_pytorch.build_vocab:build',
+            'bert = bert_pytorch.__main__:train',
+            'bert-vocab = bert_pytorch.dataset.vocab:build',
         ]
     },
     cmdclass={
