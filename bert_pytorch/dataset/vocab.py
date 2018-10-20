@@ -167,7 +167,7 @@ class WordVocab(Vocab):
             return pickle.load(f)
 
 
-if __name__ == "__main__":
+def build():
     import argparse
 
     parser = argparse.ArgumentParser()

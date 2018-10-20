@@ -38,7 +38,7 @@ class BERTDataset(Dataset):
         output = {"bert_input": bert_input,
                   "bert_label": bert_label,
                   "segment_label": segment_label,
-                  "is_next": self.datas[item]["is_next"]}
+                  "is_next": is_next_label}
 
         return {key: torch.tensor(value) for key, value in output.items()}
 

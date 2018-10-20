@@ -10,7 +10,7 @@ from .dataset import BERTDataset, WordVocab
 def train():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-d", "--train_dataset", required=True, type=str)
+    parser.add_argument("-c", "--train_dataset", required=True, type=str)
     parser.add_argument("-t", "--test_dataset", type=str, default=None)
     parser.add_argument("-v", "--vocab_path", required=True, type=str)
     parser.add_argument("-o", "--output_path", required=True, type=str)
@@ -23,7 +23,7 @@ def train():
     parser.add_argument("-b", "--batch_size", type=int, default=64)
     parser.add_argument("-e", "--epochs", type=int, default=10)
     parser.add_argument("-w", "--num_workers", type=int, default=5)
-    parser.add_argument("-c", "--with_cuda", type=bool, default=True)
+    parser.add_argument("--with_cuda", type=bool, default=True)
     parser.add_argument("--log_freq", type=int, default=10)
     parser.add_argument("--corpus_lines", type=int, default=None)
 
