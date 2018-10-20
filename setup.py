@@ -44,9 +44,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'bert = bert_pytorch.train:train',
-            'bert-dataset = bert_pytorch.build_dataset:build',
-            'bert-vocab = bert_pytorch.build_vocab:build',
+            'bert = bert_pytorch.__main__:train',
+            'bert-vocab = bert_pytorch.dataset.vocab:build',
         ]
     },
     cmdclass={
