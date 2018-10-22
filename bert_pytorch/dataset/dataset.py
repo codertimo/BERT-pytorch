@@ -5,19 +5,27 @@ import random
 
 
 class BERTDataset(Dataset):
-    def __init__(self, corpus_path, vocab, seq_len, encoding="utf-8", corpus_lines=None):
+    def __init__(self, corpus_path, vocab, seq_len, encoding="utf-8", corpus_lines=None, on_memory=True):
         self.vocab = vocab
         self.seq_len = seq_len
+        self.on_memory = on_memory
+        self.corpus_lines = corpus_lines
 
         with open(corpus_path, "r", encoding=encoding) as f:
-            self.datas = [line[:-1].split("\t")
-                          for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)]
+            if self.corpus_lines is None and not on_memory:
+                for _ in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
+                    self.corpus_lines += 1
+
+            if on_memory:
+                self.lines = [line[:-1].split("\t")
+                              for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)]
+                self.corpus_lines = len(self.lines)
 
     def __len__(self):
-        return len(self.datas)
+        return self.corpus_lines
 
     def __getitem__(self, item):
-        t1, (t2, is_next_label) = self.datas[item][0], self.random_sent(item)
+        t1, t2, is_next_label = self.random_sent(item)
         t1_random, t1_label = self.random_word(t1)
         t2_random, t2_label = self.random_word(t2)
 
@@ -54,7 +62,7 @@ class BERTDataset(Dataset):
                     tokens[i] = self.vocab.mask_index
 
                 # 10% randomly change token to random token
-                elif prob * 0.8 <= prob < prob * 0.9:
+                elif 0.15 * 0.8 <= prob < 0.15 * 0.9:
                     tokens[i] = random.randrange(len(self.vocab))
 
                 # 10% randomly change token to current token
@@ -72,6 +80,6 @@ class BERTDataset(Dataset):
     def random_sent(self, index):
         # output_text, label(isNotNext:0, isNext:1)
         if random.random() > 0.5:
-            return self.datas[index][1], 1
+            return self.datas[index][0], self.datas[index][1], 1
         else:
-            return self.datas[random.randrange(len(self.datas))][1], 0
+            return self.datas[index][0], self.datas[random.randrange(len(self.datas))][1], 0
