@@ -67,12 +67,14 @@ class BERTDataset(Dataset):
         for i, token in enumerate(tokens):
             prob = random.random()
             if prob < 0.15:
-                # 80% randomly change token to make token
-                if prob < prob * 0.8:
+                prob /= 0.15
+
+                # 80% randomly change token to mask token
+                if prob < 0.8:
                     tokens[i] = self.vocab.mask_index
 
                 # 10% randomly change token to random token
-                elif 0.15 * 0.8 <= prob < 0.15 * 0.9:
+                elif prob < 0.9:
                     tokens[i] = random.randrange(len(self.vocab))
 
                 # 10% randomly change token to current token
