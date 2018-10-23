@@ -60,7 +60,7 @@ bert-vocab -c data/corpus.small -o data/vocab.small
 
 ### 2. Train your own BERT model
 ```shell
-bert -c data/dataset.small -v data/vocab.small -o output/bert.model
+bert -c data/corpus.small -v data/vocab.small -o output/bert.model
 ```
 
 ## Language Model Pre-training
