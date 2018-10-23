@@ -42,20 +42,20 @@ pip install bert-pytorch
 
 ### 0. Prepare your corpus
 ```
-Welcome to the \t the jungle\n
-I can stay \t here all night\n
+Welcome to the  the jungle
+I can stay  here all night
 ```
 
 or tokenized corpus (tokenization is not in package)
 ```
-Wel_ _come _to _the \t _the _jungle\n
-_I _can _stay \t _here _all _night\n
+Wel_ _come _to _the _the _jungle
+_I _can _stay   _here _all _night
 ```
 
 
 ### 1. Building vocab based on your corpus
 ```shell
-bert-vocab -c data/corpus.small -o data/vocab.small
+vocab-builder -c data/corpus.small -o data/vocab.small
 ```
 
 ### 2. Train your own BERT model
@@ -109,7 +109,7 @@ not directly captured by language modeling
 
 
 ## Author
-Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatter.co.kr)
+Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatterlab.co.kr)
 
 ## License
 
@@ -117,4 +117,4 @@ This project following Apache 2.0 License as written in LICENSE file
 
 Copyright 2018 Junseong Kim, Scatter Lab, respective BERT contributors
 
-Copyright (c) 2018 Alexander Rush : [The Annotated Trasnformer](https://github.com/harvardnlp/annotated-transformer)
+Copyright (c) 2018 Alexander Rush : [The Annotated Transformer](https://github.com/harvardnlp/annotated-transformer)

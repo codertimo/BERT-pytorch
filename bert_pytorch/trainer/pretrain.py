@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
+
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from ..model import BERTLM, BERT
 from .optim_schedule import ScheduledOptim
-
-import tqdm
 
 
 class BERTTrainer:
@@ -84,17 +83,11 @@ class BERTTrainer:
         """
         str_code = "train" if train else "test"
 
-        # Setting the tqdm progress bar
-        data_iter = tqdm.tqdm(enumerate(data_loader),
-                              desc="EP_%s:%d" % (str_code, epoch),
-                              total=len(data_loader),
-                              bar_format="{l_bar}{r_bar}")
-
         avg_loss = 0.0
         total_correct = 0
         total_element = 0
 
-        for i, data in data_iter:
+        for i, data in enumerate(data_loader):
             # 0. batch_data will be sent into the device(GPU or cpu)
             data = {key: value.to(self.device) for key, value in data.items()}
 
@@ -124,14 +117,16 @@ class BERTTrainer:
 
             post_fix = {
                 "epoch": epoch,
-                "iter": i,
+                "iter": "[%d/%d]" % (i, len(data_loader)),
                 "avg_loss": avg_loss / (i + 1),
-                "avg_acc": total_correct / total_element * 100,
+                "mask_loss": mask_loss.item(),
+                "next_loss": next_loss.item(),
+                "avg_next_acc": total_correct / total_element * 100,
                 "loss": loss.item()
             }
 
             if i % self.log_freq == 0:
-                data_iter.write(str(post_fix))
+                print(str(post_fix))
 
         print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_iter), "total_acc=",
               total_correct * 100.0 / total_element)
