@@ -50,7 +50,7 @@ class BERTDataset(Dataset):
             prob = random.random()
             if prob < 0.15:
                 # 80% randomly change token to make token
-                if prob < prob * 0.8:
+                if prob < 0.15 * 0.8:
                     tokens[i] = self.vocab.mask_index
 
                 # 10% randomly change token to random token
