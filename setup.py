@@ -3,7 +3,7 @@ from setuptools.command.install import install
 import os
 import sys
 
-__version__ = "0.0.1a4"
+__version__ = "0.0.1a5"
 
 with open("requirements.txt") as f:
     require_packages = [line[:-1] if line[-1] == "\n" else line for line in f]
