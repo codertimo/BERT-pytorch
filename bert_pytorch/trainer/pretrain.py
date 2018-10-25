@@ -102,7 +102,7 @@ class BERTTrainer:
             mask_loss = self.masked_criterion(mask_lm_output.transpose(1, 2), data["bert_label"])
 
             # 2-3. Adding next_loss and mask_loss : 3.4 Pre-training Procedure
-            loss = next_loss + mask_loss
+            loss = next_loss + 10 * mask_loss
 
             # 3. backward and optimization only in train
             if train:
