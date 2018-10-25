@@ -128,6 +128,7 @@ class BERTTrainer:
 
             if i % self.log_freq == 0:
                 print(str(post_fix))
+                print(next_sent_output.argmax(dim=-1)[:100])
 
         print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_loader), "total_acc=",
               total_correct * 100.0 / total_element)
