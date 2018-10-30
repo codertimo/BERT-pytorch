@@ -109,7 +109,7 @@ not directly captured by language modeling
 
 
 ## Author
-Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatter.co.kr)
+Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatterlab.co.kr)
 
 ## License
 
