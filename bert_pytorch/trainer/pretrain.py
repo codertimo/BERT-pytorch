@@ -56,7 +56,7 @@ class BERTTrainer:
 
         # Setting the Adam optimizer with hyper-param
         self.optim = AdamW(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
-        self.optim_schedule = ScheduledOptim(self.optim, self.bert.hidden, n_warmup_steps=warmup_steps)
+        # self.optim_schedule = ScheduledOptim(self.optim, self.bert.hidden, n_warmup_steps=warmup_steps)
 
         # Using Negative Log Likelihood Loss function for predicting the masked_token
         self.masked_criterion = nn.NLLLoss(ignore_index=0)
@@ -107,9 +107,9 @@ class BERTTrainer:
 
             # 3. backward and optimization only in train
             if train:
-                self.optim_schedule.zero_grad()
+                self.optim.zero_grad()
                 loss.backward()
-                self.optim_schedule.step_and_update_lr()
+                self.optim.step()
 
             # next sentence prediction accuracy
             correct = next_sent_output.argmax(dim=-1).eq(data["is_next"]).sum().item()
