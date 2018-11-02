@@ -18,7 +18,8 @@ class BERTLM(nn.Module):
         super().__init__()
         self.bert = bert
         self.next_sentence = NextSentencePrediction(self.bert.hidden)
-        self.mask_lm = MaskedLanguageModel(self.bert.hidden, vocab_size)
+        self.mask_lm = MaskedLanguageModel(self.bert.hidden, vocab_size,
+                                           embedding=self.bert.embedding.token)
 
     def forward(self, x, segment_label):
         x = self.bert(x, segment_label)
@@ -48,13 +49,15 @@ class MaskedLanguageModel(nn.Module):
     n-class classification problem, n-class = vocab_size
     """
 
-    def __init__(self, hidden, vocab_size):
+    def __init__(self, hidden, vocab_size, embedding=None):
         """
         :param hidden: output size of BERT model
         :param vocab_size: total vocab size
         """
         super().__init__()
         self.linear = nn.Linear(hidden, vocab_size)
+        if embedding is not None:
+            self.linear.weight.data = embedding.weight.data
         self.softmax = nn.LogSoftmax(dim=-1)
 
     def forward(self, x):
