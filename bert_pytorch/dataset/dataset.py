@@ -19,7 +19,7 @@ class BERTDataset(Dataset):
                     self.datas.append((line[:-1], next_line[:-1]))
 
     def __len__(self):
-        return self.datas
+        return len(self.datas)
 
     def __getitem__(self, item):
         t1, t2, is_next_label = self.random_sent(item)
