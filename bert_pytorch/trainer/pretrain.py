@@ -5,7 +5,8 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from ..model import BERTLM, BERT
-from .optim_schedule import ScheduledOptim
+from .optimizer.optim_schedule import ScheduledOptim
+from .optimizer.adamw import AdamW
 
 
 class BERTTrainer:
@@ -54,7 +55,7 @@ class BERTTrainer:
         self.test_data = test_dataloader
 
         # Setting the Adam optimizer with hyper-param
-        self.optim = Adam(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
+        self.optim = AdamW(self.model.parameters(), lr=lr, betas=betas, weight_decay=weight_decay)
         self.optim_schedule = ScheduledOptim(self.optim, self.bert.hidden, n_warmup_steps=warmup_steps)
 
         # Using Negative Log Likelihood Loss function for predicting the masked_token
@@ -96,7 +97,7 @@ class BERTTrainer:
             next_sent_output, mask_lm_output = self.model.forward(data["bert_input"], data["segment_label"])
 
             # 2-1. NLL(negative log likelihood) loss of is_next classification result
-            next_loss = self.next_criterion(next_sent_output, data["is_next"]) * 10
+            next_loss = self.next_criterion(next_sent_output, data["is_next"])
 
             # 2-2. NLLLoss of predicting masked token word
             mask_loss = self.masked_criterion(mask_lm_output.transpose(1, 2), data["bert_label"])
@@ -127,7 +128,12 @@ class BERTTrainer:
             }
 
             if i % self.log_freq == 0:
-                print(str(post_fix))
+                print(post_fix)
+
+                # Logging for PaperSpace matrix monitor
+                # index = epoch * len(data_loader) + i
+                # for code in ["avg_loss", "mask_loss", "next_loss", "avg_next_acc"]:
+                #     print(json.dumps({"chart": code, "y": post_fix[code], "x": index}))
 
         print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_loader), "total_acc=",
               total_correct * 100.0 / total_element)

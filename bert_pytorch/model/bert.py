@@ -31,7 +31,9 @@ class BERT(nn.Module):
 
         # multi-layers transformer blocks, deep network
         self.transformer_blocks = nn.ModuleList(
-            [TransformerBlock(hidden, attn_heads, hidden * 4, dropout) for _ in range(n_layers)])
+            [TransformerBlock(hidden=hidden, attn_heads=attn_heads,
+                              feed_forward_hidden=hidden * 4, dropout=dropout)
+             for _ in range(n_layers)])
 
     def forward(self, x, segment_info):
         # attention masking for padded token
