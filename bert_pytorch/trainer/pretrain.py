@@ -75,7 +75,7 @@ class BERTTrainer:
         """
         loop over the data_loader for training or testing
         if on train status, backward operation is activated
-        and also auto save the model every peoch
+        and also auto save the model every epoch
 
         :param epoch: current epoch index
         :param data_loader: torch.utils.data.DataLoader for iteration
