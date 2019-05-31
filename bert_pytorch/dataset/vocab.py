@@ -117,10 +117,10 @@ class Vocab(TorchVocab):
 
 # Building Vocab with text files
 class WordVocab(Vocab):
-    def __init__(self, texts, max_size=None, min_freq=1):
+    def __init__(self, texts, total=None ,max_size=None, min_freq=1):
         print("Building Vocab")
         counter = Counter()
-        for line in tqdm.tqdm(texts):
+        for line in tqdm.tqdm(texts, total=total):
             if isinstance(line, list):
                 words = line
             else:
@@ -166,7 +166,6 @@ class WordVocab(Vocab):
         with open(vocab_path, "rb") as f:
             return pickle.load(f)
 
-
 def build():
     import argparse
 
@@ -178,8 +177,11 @@ def build():
     parser.add_argument("-m", "--min_freq", type=int, default=1)
     args = parser.parse_args()
 
+
+    total = sum(1 for line in open(args.corpus_path, "r", encoding=args.encoding))
+
     with open(args.corpus_path, "r", encoding=args.encoding) as f:
-        vocab = WordVocab(f, max_size=args.vocab_size, min_freq=args.min_freq)
+        vocab = WordVocab(f, total=total, max_size=args.vocab_size, min_freq=args.min_freq)
 
     print("VOCAB SIZE:", len(vocab))
     vocab.save_vocab(args.output_path)
