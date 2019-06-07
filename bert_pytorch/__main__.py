@@ -14,6 +14,7 @@ def train():
     parser.add_argument("-t", "--test_dataset", type=str, default=None, help="test set for evaluate train set")
     parser.add_argument("-v", "--vocab_path", required=True, type=str, help="built vocab model path with bert-vocab")
     parser.add_argument("-o", "--output_path", required=True, type=str, help="ex)output/bert.model")
+    parser.add_argument("-log", "--log_dir", type=str, default=None, help="dir for saving log")
 
     parser.add_argument("-hs", "--hidden", type=int, default=256, help="hidden size of transformer model")
     parser.add_argument("-l", "--layers", type=int, default=8, help="number of layers")
@@ -30,6 +31,7 @@ def train():
     parser.add_argument("--corpus_lines", type=int, default=None, help="total number of lines in corpus")
     parser.add_argument("--cuda_devices", type=int, nargs='+', default=None, help="CUDA device ids")
     parser.add_argument("--on_memory", type=bool, default=True, help="Loading on memory: true or false")
+    parser.add_argument("--load_model", type=str, default=None, help="Load model weights from saved model")
 
     parser.add_argument("--lr", type=float, default=1e-4, help="learning rate of adam")
     parser.add_argument("--adam_weight_decay", type=float, default=0.00, help="weight_decay of adam")
@@ -61,10 +63,15 @@ def train():
     print("Creating BERT Trainer")
     trainer = BERTTrainer(bert, len(vocab), train_dataloader=train_data_loader, test_dataloader=test_data_loader,
                           lr=args.lr, betas=(args.adam_beta1, args.adam_beta2), weight_decay=args.adam_weight_decay,
-                          with_cuda=args.with_cuda, cuda_devices=args.cuda_devices, log_freq=args.log_freq)
+                          with_cuda=args.with_cuda, cuda_devices=args.cuda_devices, log_freq=args.log_freq, log_dir=args.log_dir)
 
     print("Training Start")
-    for epoch in range(args.epochs):
+    if args.load_model:
+        e = trainer.load(args.load_model)
+    else:
+        e = 0
+
+    for epoch in range(e, args.epochs):
         trainer.train(epoch)
         trainer.save(epoch, args.output_path)
 
