@@ -7,6 +7,7 @@ from ..model import BERTLM, BERT
 from .optim_schedule import ScheduledOptim
 
 import tqdm
+import os
 
 
 class BERTTrainer:
@@ -23,7 +24,7 @@ class BERTTrainer:
     def __init__(self, bert: BERT, vocab_size: int,
                  train_dataloader: DataLoader, test_dataloader: DataLoader = None,
                  lr: float = 1e-4, betas=(0.9, 0.999), weight_decay: float = 0.01, warmup_steps=10000,
-                 with_cuda: bool = True, cuda_devices=None, log_freq: int = 10):
+                 with_cuda: bool = True, cuda_devices=None, log_freq: int = 10, log_dir: str = None):
         """
         :param bert: BERT model which you want to train
         :param vocab_size: total word vocab size
@@ -59,9 +60,10 @@ class BERTTrainer:
         self.optim_schedule = ScheduledOptim(self.optim, self.bert.hidden, n_warmup_steps=warmup_steps)
 
         # Using Negative Log Likelihood Loss function for predicting the masked_token
-        self.criterion = nn.NLLLoss(ignore_index=0)
+        self.criterion = nn.NLLLoss()  # nn.NLLLoss(ignore_index=0)
 
         self.log_freq = log_freq
+        self.log_dir = log_dir
 
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
 
@@ -132,9 +134,13 @@ class BERTTrainer:
 
             if i % self.log_freq == 0:
                 data_iter.write(str(post_fix))
-
-        print("EP%d_%s, avg_loss=" % (epoch, str_code), avg_loss / len(data_iter), "total_acc=",
-              total_correct * 100.0 / total_element)
+        to_print = "EP{}_{}, avg_loss={}, total_acc={}\n".format(epoch, str_code, avg_loss / len(data_iter),\
+                     total_correct * 100.0 / total_element)
+        print(to_print)
+        if self.log_dir:
+            os.mkdir(os.path.dirname(self.log_dir), exist_ok=True)
+            with open(self.log_dir, 'a', encoding='utf8') as log_file:
+                log_file.write(to_print)
 
     def save(self, epoch, file_path="output/bert_trained.model"):
         """
@@ -145,7 +151,24 @@ class BERTTrainer:
         :return: final_output_path
         """
         output_path = file_path + ".ep%d" % epoch
-        torch.save(self.bert.cpu(), output_path)
+        torch.save({'epoch': epoch,
+                    'model_state_dict': self.bert.cpu().state_dict(),
+                    'optimzer_state_dict': self.optim.state_dict(),
+                    }, output_path)
         self.bert.to(self.device)
         print("EP:%d Model Saved on:" % epoch, output_path)
         return output_path
+
+    def load(self, model_path):
+        """
+        Load BERT model from saved model
+        """
+        self.bert = torch.load(model_path)
+        
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.optim.load_state_dict(checkpoint['optimizer_state_dict'])
+        epoch = checkpoint['epoch']
+        
+        self.bert.eval()
+
+        return epoch
