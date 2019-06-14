@@ -115,10 +115,10 @@ class BERTDataset(Dataset):
         if self.on_memory:
             return self.lines[random.randrange(len(self.lines))][1]
 
-        line = self.file.__next__()
+        line = self.random_file.__next__()
         if line is None:
-            self.file.close()
-            self.file = open(self.corpus_path, "r", encoding=self.encoding)
+            self.random_file.close()
+            self.random_file = open(self.corpus_path, "r", encoding=self.encoding)
             for _ in range(random.randint(self.corpus_lines if self.corpus_lines < 1000 else 1000)):
                 self.random_file.__next__()
             line = self.random_file.__next__()
