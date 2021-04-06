@@ -1,2 +1,3 @@
 torch
 tqdm
+tokenizers
