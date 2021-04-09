@@ -1,3 +1,4 @@
+import json
 from typing import NamedTuple
 
 
@@ -13,6 +14,12 @@ class BertConfig(NamedTuple):
     num_attention_heads: int
     num_hidden_layers: int
 
-    layer_norm_eps: float
     hidden_dropout_prob: float
     attention_probs_dropout_prob: float
+    layer_norm_eps: float = 1e-12
+
+    @classmethod
+    def from_json(cls, config_path: str) -> "BertConfig":
+        with open(config_path) as f:
+            config_dict = json.load(f)
+            return BertConfig(**config_dict)
