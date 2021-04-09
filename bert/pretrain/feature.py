@@ -25,7 +25,6 @@ def generate_segment_ab(
 ):
     positive_texts_tokens = positive_document.tokenized_texts
     if len(positive_texts_tokens) == 0:
-        print(positive_document.texts)
         return
 
     positive_text_pointer = 0
