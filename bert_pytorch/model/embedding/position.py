@@ -16,7 +16,13 @@ class PositionalEmbedding(nn.Module):
         div_term = (torch.arange(0, d_model, 2).float() * -(math.log(10000.0) / d_model)).exp()
 
         pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
+
+        #pe[:, 1::2].size(-1) is less than div_term.size(-1) when d_model is an odd number
+        if pe[:, 1::2].size(-1) >= div_term.size(-1):
+            pe[:, 1::2] = torch.cos(position * div_term)
+        else:
+            cos_len = pe[:, 1::2].size(-1)
+            pe[:, 1::2] = torch.cos(position * div_term[:cos_len])
 
         pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
