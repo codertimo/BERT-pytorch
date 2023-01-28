@@ -33,6 +33,9 @@ class TorchVocab(object):
                 to zero vectors; can be any function that takes in a Tensor and
                 returns a Tensor of the same size. Default: torch.Tensor.zero_
             vectors_cache: directory for cached vectors. Default: '.vector_cache'
+        Attributes:
+            self.itos表示所有token组成的词表；
+            self.stoi表示所有token和其在self.itos中的索引构成字典
         """
         self.freqs = counter
         counter = counter.copy()
