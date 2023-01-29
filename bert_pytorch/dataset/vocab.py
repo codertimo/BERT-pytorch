@@ -127,9 +127,9 @@ class WordVocab(Vocab):
             if isinstance(line, list):
                 words = line
             else:
-                #原来的replace不能将"\t"、"\n"替换为""，故进行如下更改
-                #words = line.replace("\n", "").replace("\t", "").split()
-                words = line.replace('\\t', '').replace('\\n', '').split()
+                #原来的replace不能将"\t"、"\n"替换为""，故进行如下更改(please忽略该注释)
+                words = line.replace("\n", "").replace("\t", "").split()
+                #words = line.replace('\\t', '').replace('\\n', '').split()
 
             for word in words:
                 counter[word] += 1

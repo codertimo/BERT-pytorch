@@ -14,17 +14,17 @@ class BERTDataset(Dataset):
         self.corpus_path = corpus_path
         self.encoding = encoding
 
-        with open(corpus_path, "r", encoding=encoding) as f:
+        with open(corpus_path, "r", encoding=encoding) as f:            
             if self.corpus_lines is None and not on_memory:
                 for _ in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
                     self.corpus_lines += 1
 
             if on_memory:
-                self.lines = [line[:-1].split("\t")
-                              for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)]
+                self.lines = [line[:-1].split('\t')
+                              for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)]                
                 self.corpus_lines = len(self.lines)
 
-        if not on_memory:
+        if not on_memory: #下面的file和random_file是什么作用？
             self.file = open(corpus_path, "r", encoding=encoding)
             self.random_file = open(corpus_path, "r", encoding=encoding)
 
@@ -35,6 +35,7 @@ class BERTDataset(Dataset):
         return self.corpus_lines
 
     def __getitem__(self, item):
+        #对按索引item随机选出的sentence pair进行mask和padding填充
         t1, t2, is_next_label = self.random_sent(item)
         t1_random, t1_label = self.random_word(t1)
         t2_random, t2_label = self.random_word(t2)
@@ -62,11 +63,13 @@ class BERTDataset(Dataset):
 
     def random_word(self, sentence):
         tokens = sentence.split()
-        output_label = []
+        output_label = [] #真正被masked的token用mask_index(=4)填充，随机替换的用随机数填充，其他用token在词表self.vocab.stoi对应的索引填充；
 
         for i, token in enumerate(tokens):
             prob = random.random()
+            #BERT随机选择15%的tokens进行mask
             if prob < 0.15:
+                #对于随机选择的15%的tokens，再做一次随机
                 prob /= 0.15
 
                 # 80% randomly change token to mask token
@@ -93,6 +96,7 @@ class BERTDataset(Dataset):
         t1, t2 = self.get_corpus_line(index)
 
         # output_text, label(isNotNext:0, isNext:1)
+        #以50%的概率返回原始的(sentence,next_sentence) pair，否则对next_sentence随机采样
         if random.random() > 0.5:
             return t1, t2, 1
         else:
