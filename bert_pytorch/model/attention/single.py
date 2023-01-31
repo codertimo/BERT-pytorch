@@ -15,7 +15,9 @@ class Attention(nn.Module):
                  / math.sqrt(query.size(-1))
 
         if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
+            #transformer中的mask的作用：encoder中是去除<pad>序列的影响；decoder中是去除'不可见逻辑'
+            #这里显然是前者；
+            scores = scores.masked_fill(mask == 0, -1e9) #注意mask和score需要是可广播的
 
         p_attn = F.softmax(scores, dim=-1)
 
