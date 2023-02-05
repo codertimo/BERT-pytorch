@@ -14,20 +14,22 @@ class BERTDataset(Dataset):
         self.corpus_path = corpus_path
         self.encoding = encoding
 
-        with open(corpus_path, "r", encoding=encoding) as f:            
-            if self.corpus_lines is None and not on_memory:
+        with open(corpus_path, "r", encoding=encoding) as f:
+            #读取预料库后分下面2种情况处理：
+            if self.corpus_lines is None and not on_memory: #如果不将语料库直接加载到内存，则需先确定语料库行数
                 for _ in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
                     self.corpus_lines += 1
 
             if on_memory:
+                #数据集全部加载到内存
                 self.lines = [line[:-1].split('\t')
-                              for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)]                
-                self.corpus_lines = len(self.lines)
+                              for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)] #对预料库每行根据\t字符分成2个sentence               
+                self.corpus_lines = len(self.lines) #获取语料库行数
 
-        if not on_memory: #下面的file和random_file是什么作用？
+        if not on_memory: 
             self.file = open(corpus_path, "r", encoding=encoding)
             self.random_file = open(corpus_path, "r", encoding=encoding)
-
+            #错位抽取负样本，作用是什么?
             for _ in range(random.randint(self.corpus_lines if self.corpus_lines < 1000 else 1000)):
                 self.random_file.__next__()
 
