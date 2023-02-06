@@ -21,7 +21,7 @@ class BERTDataset(Dataset):
                     self.corpus_lines += 1
 
             if on_memory:
-                #数据集全部加载到内存
+                #数据集全部加载到内存，语料库解析成list类型的self.liines属性
                 self.lines = [line[:-1].split('\t')
                               for line in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines)] #对预料库每行根据\t字符分成2个sentence               
                 self.corpus_lines = len(self.lines) #获取语料库行数
@@ -37,13 +37,14 @@ class BERTDataset(Dataset):
         return self.corpus_lines
 
     def __getitem__(self, item):
-        #对按索引item随机选出的sentence pair进行mask和padding填充
-        t1, t2, is_next_label = self.random_sent(item)
-        t1_random, t1_label = self.random_word(t1)
-        t2_random, t2_label = self.random_word(t2)
+        #魔术方法__getitem__的定义，功能令类的实例对象向list那样根据索引item取值
+        #BERTDataset类实例化返回的bert对象均会进行Next Sentence操作和Masked LM操作
+        t1, t2, is_next_label = self.random_sent(item) #Next Sentence操作
+        t1_random, t1_label = self.random_word(t1) #Masked LM操作, 其中t1_label表示t1各个位置被masked的类别索引，参看vocab.py中Vocab类的初始化定义
+        t2_random, t2_label = self.random_word(t2) 
 
         # [CLS] tag = SOS tag, [SEP] tag = EOS tag
-        t1 = [self.vocab.sos_index] + t1_random + [self.vocab.eos_index]
+        t1 = [self.vocab.sos_index] + t1_random + [self.vocab.eos_index] #论文Figure2
         t2 = t2_random + [self.vocab.eos_index]
 
         t1_label = [self.vocab.pad_index] + t1_label + [self.vocab.pad_index]
@@ -53,7 +54,7 @@ class BERTDataset(Dataset):
         bert_input = (t1 + t2)[:self.seq_len]
         bert_label = (t1_label + t2_label)[:self.seq_len]
 
-        padding = [self.vocab.pad_index for _ in range(self.seq_len - len(bert_input))]
+        padding = [self.vocab.pad_index for _ in range(self.seq_len - len(bert_input))] #最大长度和实际长度之差就是需要padding的位置数量
         bert_input.extend(padding), bert_label.extend(padding), segment_label.extend(padding)
 
         output = {"bert_input": bert_input,
@@ -95,14 +96,13 @@ class BERTDataset(Dataset):
         return tokens, output_label
 
     def random_sent(self, index):
-        t1, t2 = self.get_corpus_line(index)
-
-        # output_text, label(isNotNext:0, isNext:1)
-        #以50%的概率返回原始的(sentence,next_sentence) pair，否则对next_sentence随机采样
+        t1, t2 = self.get_corpus_line(index)        
+        # for sentence A and B, 50% of the time B is the actual next sentence that follows A(labeled as NotNext)
+        # and for 50% of the time it is a random sentence from the corpus(labeled as NotNext)
         if random.random() > 0.5:
-            return t1, t2, 1
+            return t1, t2, 1 #1表示isNext
         else:
-            return t1, self.get_random_line(), 0
+            return t1, self.get_random_line(), 0 #0表示isNotNext
 
     def get_corpus_line(self, item):
         if self.on_memory:
