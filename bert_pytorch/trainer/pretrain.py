@@ -43,7 +43,8 @@ class BERTTrainer:
         # This BERT model will be saved every epoch
         self.bert = bert
         # Initialize the BERT Language Model, with BERT model
-        self.model = BERTLM(bert, vocab_size).to(self.device)
+        self.model = BERTLM(bert, vocab_size).to(self.device) 
+        #BERTLM类在BERT类对输入编码的基础上返回 Masked LM和Next Sentence Prediction的预测结果
 
         # Distributed GPU training if CUDA can detect more than 1 GPU
         if with_cuda and torch.cuda.device_count() > 1:
@@ -100,12 +101,14 @@ class BERTTrainer:
 
             # 1. forward the next_sentence_prediction and masked_lm model
             next_sent_output, mask_lm_output = self.model.forward(data["bert_input"], data["segment_label"])
-
+            #data["bert_input"]中的token的mask，以及data["segment_label"]对句子对是否是前后句的标记，其标签都是句子自带的，故是无监督学习
+            #data["bert_input"], data["segment_label"]是要进行的LM mask和nsp的样本
+            #data["bert_label"]和data['is_next']是标签
             # 2-1. NLL(negative log likelihood) loss of is_next classification result
             next_loss = self.criterion(next_sent_output, data["is_next"])
 
             # 2-2. NLLLoss of predicting masked token word
-            mask_loss = self.criterion(mask_lm_output.transpose(1, 2), data["bert_label"])
+            mask_loss = self.criterion(mask_lm_output.transpose(1, 2), data["bert_label"]) #bert的与训练目标本质上个分类问题，故用NLLLnull()
 
             # 2-3. Adding next_loss and mask_loss : 3.4 Pre-training Procedure
             loss = next_loss + mask_loss
@@ -118,9 +121,9 @@ class BERTTrainer:
 
             # next sentence prediction accuracy
             correct = next_sent_output.argmax(dim=-1).eq(data["is_next"]).sum().item()
-            avg_loss += loss.item()
-            total_correct += correct
-            total_element += data["is_next"].nelement()
+            avg_loss += loss.item() #累计每一次的损失，用来计算平均损失
+            total_correct += correct #累计next sentence预测正确的个数
+            total_element += data["is_next"].nelement() #tensor元素个数，等于各个维度之积
 
             post_fix = {
                 "epoch": epoch,
