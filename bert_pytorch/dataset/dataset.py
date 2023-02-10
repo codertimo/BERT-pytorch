@@ -65,8 +65,9 @@ class BERTDataset(Dataset):
         return {key: torch.tensor(value) for key, value in output.items()}
 
     def random_word(self, sentence):
+        #sentence转换成sentence中的token在token-index词典中对应的index
         tokens = sentence.split()
-        output_label = [] #真正被masked的token用mask_index(=4)填充，随机替换的用随机数填充，其他用token在词表self.vocab.stoi对应的索引填充；
+        output_label = [] #该列表只存0和非0数字，0表示对应位置的token属于85%没被替换的，非0数字是对应位置的token在被mask处理前的vocab中对应的index
 
         for i, token in enumerate(tokens):
             prob = random.random()
@@ -83,14 +84,15 @@ class BERTDataset(Dataset):
                 elif prob < 0.9:
                     tokens[i] = random.randrange(len(self.vocab))
 
-                # 10% randomly change token to current token
+                # 10% doesn't change current token
                 else:
                     tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
 
                 output_label.append(self.vocab.stoi.get(token, self.vocab.unk_index))
 
             else:
-                tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
+                tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index) #未被masked的词，用其在vocab中真正的index填充
+                #具体地，self.vocab.unk_index=1，上句相当于从stoi token-index字典
                 output_label.append(0)
 
         return tokens, output_label
