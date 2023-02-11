@@ -1,10 +1,13 @@
-# BERT-pytorch源码阅读记录和各模块调试流程
-Source code：Google AI 2018 BERT pytorch implementation\
-调试者：wanghesong2019
-# 项目背景
- Google 这个代码写的真是漂亮， 结构清晰；但原始repository只给出了2句简单的命令行，只是执行下它们很难让我清晰了解到bert模型的内部运行机制，故下决心对该项目代码一行行啃；
- 阅读心得以注释的方式加在了代码中；调式过程单独起一个py文件，供自己和看官参考；
-# 整体框架
-![BERT-pytorch框架](https://raw.githubusercontent.com/wanghesong2019/BERT-pytorch/master/img/1.PNG)
-在上面bertEmbedding-loss-train模式中，bertEmbedding无疑是最重要的，因为其不仅包含bert的3种embedding，还实现了bert的2种pre-training目标，具体构成如下：\
-![BERT-pytorch框架](https://raw.githubusercontent.com/wanghesong2019/BERT-pytorch/master/img/2.PNG)
+# BERT-pytorch学习心得
+在2023年的2月中旬的凌晨2点，我要结束对BERT-pytorch项目的学习了，这是注册github账号之后第1次相对认真系统的学习一个开源项目，从寒假前夕开始，持续直到现在，坚持下来了离开之前，啰嗦2句，以作纪念！
+## 1.经验
+- 根据代码，结合bert论文，基本掌握了bert的真面目：包括词典构建和token随机替换，句子对随机采样的dataset模块、基于transformer编码器的encoder架构的modeling模块、包括loss计算和梯度下降的trainner模块；
+- 在代码学习的过程中，掌握了git基本操作，github的使用习惯和常见pytorch API用法；
+- 开源项目学习最好结合论文看，这样就将理论和实践结合起来了，当然最好是能灌入数据跑起来
+
+## 2.教训
+-- 代码逐行看了，也搭建了bert-pytorch环境，但是没有结合数据去运行查看结果，故调参经验并没有增加
+-- 项目学习没有指定里程碑时间表，拖沓
+-- 后续的开源项目学习，一定要结合数据，运行起来
+-- 本来想好好写一篇readme，但是到头有泄气了。
+
