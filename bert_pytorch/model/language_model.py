@@ -39,7 +39,9 @@ class NextSentencePrediction(nn.Module):
         self.softmax = nn.LogSoftmax(dim=-1)
 
     def forward(self, x):
-        return self.softmax(self.linear(x[:, 0]))
+        #the final hidden state of [CLs] is used as the sequence representation for classification tasks.
+        #where x[:, 0] representes [CLs]
+        return self.softmax(self.linear(x[:, 0]))  
 
 
 class MaskedLanguageModel(nn.Module):
@@ -54,8 +56,8 @@ class MaskedLanguageModel(nn.Module):
         :param vocab_size: total vocab size
         """
         super().__init__()
-        self.linear = nn.Linear(hidden, vocab_size)
+        self.linear = nn.Linear(hidden, vocab_size) #Linear(hidden, vocab_size)将输入的hidden维转换成vocab_size维 
         self.softmax = nn.LogSoftmax(dim=-1)
 
     def forward(self, x):
-        return self.softmax(self.linear(x))
+        return self.softmax(self.linear(x)) #x的最后维数是hidden，经self.linear()作用后最后维数变为vocab_size

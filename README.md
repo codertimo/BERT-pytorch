@@ -1,120 +1,20 @@
-# BERT-pytorch
+# BERT-pytorch学习心得
+在2023年的2月中旬的凌晨2点，我要结束对BERT-pytorch项目的学习了，这是注册github账号之后第1次相对认真系统的学习一个开源项目，从寒假前夕开始，持续直到现在，坚持下来了离开之前，啰嗦2句，以作纪念！
+## 1.经验
+- 根据代码，结合bert论文，基本掌握了bert的真面目：包括词典构建和token随机替换，句子对随机采样的dataset模块、基于transformer编码器的encoder架构的modeling模块、包括loss计算和梯度下降的trainner模块；
+- 在代码学习的过程中，掌握了git基本操作，github的使用习惯(自己的注释都合并到了master分支)和常见pytorch API用法；
+- 开源项目学习最好结合论文看，这样就将理论和实践结合起来了，当然最好是能灌入数据跑起来
 
-[![LICENSE](https://img.shields.io/github/license/codertimo/BERT-pytorch.svg)](https://github.com/codertimo/BERT-pytorch/blob/master/LICENSE)
-![GitHub issues](https://img.shields.io/github/issues/codertimo/BERT-pytorch.svg)
-[![GitHub stars](https://img.shields.io/github/stars/codertimo/BERT-pytorch.svg)](https://github.com/codertimo/BERT-pytorch/stargazers)
-[![CircleCI](https://circleci.com/gh/codertimo/BERT-pytorch.svg?style=shield)](https://circleci.com/gh/codertimo/BERT-pytorch)
-[![PyPI](https://img.shields.io/pypi/v/bert-pytorch.svg)](https://pypi.org/project/bert_pytorch/)
-[![PyPI - Status](https://img.shields.io/pypi/status/bert-pytorch.svg)](https://pypi.org/project/bert_pytorch/)
-[![Documentation Status](https://readthedocs.org/projects/bert-pytorch/badge/?version=latest)](https://bert-pytorch.readthedocs.io/en/latest/?badge=latest)
+## 2.教训
+- 代码逐行看了，也搭建了bert-pytorch环境，但是没有结合数据去运行查看结果，故调参经验并没有增加
+- 项目学习没有指定里程碑时间表，拖沓
+- 后续的开源项目学习，一定要结合数据，运行起来
+- 本来想好好写一篇readme，但是到头有泄气了。
 
-Pytorch implementation of Google AI's 2018 BERT, with simple annotation
+---
+# bert理解记录
 
-> BERT 2018 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
-> Paper URL : https://arxiv.org/abs/1810.04805
+## 20230213：今天和大华同事明浩讨论了bert的embedding部分：由token到初始化的embedding向量是怎么实现的？他认为初始化的embedding向量会参与到训练学习中，但是晚上我又看了下该项目，发现本项目的embedding模块只是承担着token的随机初始化过程，之后就会进到attention模块，先线性投影成querey,key,value之后就开始了注意力机制的计算；由此可以认为embedding模块还只是数据预处理的一部分，是不会参与到训练中的；
 
+另外一个问题是为什么可以随机初始化embedding？我认为主要是token的索引就是随机的(现到先得)，也就是说不管是token的index，还是初始的embedding向量，只要固定好key-value关系即可，不含任何的语义信息；这样就能圆回来了：如果初始化的embedding是模型参数，参与到学习训练，就破环了key-value关系的确定性；
 
-## Introduction
-
-Google AI's BERT paper shows the amazing result on various NLP task (new 17 NLP tasks SOTA), 
-including outperform the human F1 score on SQuAD v1.1 QA task. 
-This paper proved that Transformer(self-attention) based encoder can be powerfully used as 
-alternative of previous language model with proper language model training method. 
-And more importantly, they showed us that this pre-trained language model can be transfer 
-into any NLP task without making task specific model architecture.
-
-This amazing result would be record in NLP history, 
-and I expect many further papers about BERT will be published very soon.
-
-This repo is implementation of BERT. Code is very simple and easy to understand fastly.
-Some of these codes are based on [The Annotated Transformer](http://nlp.seas.harvard.edu/2018/04/03/attention.html)
-
-Currently this project is working on progress. And the code is not verified yet.
-
-## Installation
-```
-pip install bert-pytorch
-```
-
-## Quickstart
-
-**NOTICE : Your corpus should be prepared with two sentences in one line with tab(\t) separator**
-
-### 0. Prepare your corpus
-```
-Welcome to the \t the jungle\n
-I can stay \t here all night\n
-```
-
-or tokenized corpus (tokenization is not in package)
-```
-Wel_ _come _to _the \t _the _jungle\n
-_I _can _stay \t _here _all _night\n
-```
-
-
-### 1. Building vocab based on your corpus
-```shell
-bert-vocab -c data/corpus.small -o data/vocab.small
-```
-
-### 2. Train your own BERT model
-```shell
-bert -c data/corpus.small -v data/vocab.small -o output/bert.model
-```
-
-## Language Model Pre-training
-
-In the paper, authors shows the new language model training methods, 
-which are "masked language model" and "predict next sentence".
-
-
-### Masked Language Model 
-
-> Original Paper : 3.3.1 Task #1: Masked LM 
-
-```
-Input Sequence  : The man went to [MASK] store with [MASK] dog
-Target Sequence :                  the                his
-```
-
-#### Rules:
-Randomly 15% of input token will be changed into something, based on under sub-rules
-
-1. Randomly 80% of tokens, gonna be a `[MASK]` token
-2. Randomly 10% of tokens, gonna be a `[RANDOM]` token(another word)
-3. Randomly 10% of tokens, will be remain as same. But need to be predicted.
-
-### Predict Next Sentence
-
-> Original Paper : 3.3.2 Task #2: Next Sentence Prediction
-
-```
-Input : [CLS] the man went to the store [SEP] he bought a gallon of milk [SEP]
-Label : Is Next
-
-Input = [CLS] the man heading to the store [SEP] penguin [MASK] are flight ##less birds [SEP]
-Label = NotNext
-```
-
-"Is this sentence can be continuously connected?"
-
- understanding the relationship, between two text sentences, which is
-not directly captured by language modeling
-
-#### Rules:
-
-1. Randomly 50% of next sentence, gonna be continuous sentence.
-2. Randomly 50% of next sentence, gonna be unrelated sentence.
-
-
-## Author
-Junseong Kim, Scatter Lab (codertimo@gmail.com / junseong.kim@scatterlab.co.kr)
-
-## License
-
-This project following Apache 2.0 License as written in LICENSE file
-
-Copyright 2018 Junseong Kim, Scatter Lab, respective BERT contributors
-
-Copyright (c) 2018 Alexander Rush : [The Annotated Trasnformer](https://github.com/harvardnlp/annotated-transformer)

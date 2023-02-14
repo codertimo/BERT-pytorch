@@ -33,6 +33,9 @@ class TorchVocab(object):
                 to zero vectors; can be any function that takes in a Tensor and
                 returns a Tensor of the same size. Default: torch.Tensor.zero_
             vectors_cache: directory for cached vectors. Default: '.vector_cache'
+        Attributes:
+            self.itos表示所有token组成的词表；
+            self.stoi表示所有token和其在self.itos中的索引构成字典
         """
         self.freqs = counter
         counter = counter.copy()
@@ -124,13 +127,18 @@ class WordVocab(Vocab):
             if isinstance(line, list):
                 words = line
             else:
+                #原来的replace不能将"\t"、"\n"替换为""，故进行如下更改(please忽略该注释)
                 words = line.replace("\n", "").replace("\t", "").split()
+                #words = line.replace('\\t', '').replace('\\n', '').split()
 
             for word in words:
                 counter[word] += 1
         super().__init__(counter, max_size=max_size, min_freq=min_freq)
 
     def to_seq(self, sentence, seq_len=None, with_eos=False, with_sos=False, with_len=False):
+        """将句子转化为由self.stoi中的token对应的index组成的list,如：
+        sentence = 'Welcome to the the jungle'， 则to_seq(sentence)返回 [7, 14, 5, 5, 11]
+        """
         if isinstance(sentence, str):
             sentence = sentence.split()
 
@@ -153,6 +161,9 @@ class WordVocab(Vocab):
         return (seq, origin_seq_len) if with_len else seq
 
     def from_seq(self, seq, join=False, with_pad=False):
+        """将to_seq()函数返回的由index组成的list转化为self.stoi中对应的token组成的list,比如
+        seq=[7, 14, 5, 5, 11]，则from_seq(seq)将返回['Welcome', 'to', 'the', 'the', 'jungle']
+        """
         words = [self.itos[idx]
                  if idx < len(self.itos)
                  else "<%d>" % idx
